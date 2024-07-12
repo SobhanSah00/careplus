@@ -46,12 +46,21 @@ export function PatientForm() {
       };
 
       const newUser = await createUser(user);
+      console.log("newUser after creation or fetching:", newUser);
 
-      if (newUser) {
-        router.push(`/patients/${newUser.$id}/register`);
+      if (newUser && newUser.$id) {
+        const queryParams = new URLSearchParams({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+        }).toString();
+
+        router.push(`/patients/${newUser.$id}/register?${queryParams}`);
+      } else {
+        console.error("New user object is missing the $id property or is undefined");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error creating user:", error);
     }
 
     setIsLoading(false);
