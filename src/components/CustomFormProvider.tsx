@@ -16,6 +16,11 @@ import Image from 'next/image'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { E164Number } from 'libphonenumber-js' // Import the correct type for phone numbers
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { SelectValue, Select } from "./ui/select"
+
+
 
 interface CustomProps {
     control: Control<any>,
@@ -33,7 +38,7 @@ interface CustomProps {
 }
 
 const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
-  const { fieldType, iconSrc, iconAlt, placeholder } = props;
+  const { fieldType, iconSrc, iconAlt, placeholder, showTimeSelect, dateFormat, renderSkeleton } = props;
 
   switch (fieldType) {
     case FormFieldType.INPUT:
@@ -71,7 +76,51 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               className=" input-phone"
             />
           </FormControl>
-      )
+      );
+    
+    case FormFieldType.DATE_PICKER :
+      return (
+        <div className="flex rounded-md border border-dark-500 bg-dark-400">
+          <Image src="/assets/icons/calendar.svg"
+           alt="calendar"
+           height={24}
+           width={24}
+           className='ml-2'
+          />
+
+          <FormControl>
+            <DatePicker 
+              selected={field.value}
+              onChange={(date) => field.onChange(date)} 
+              dateFormat={dateFormat ?? 'MM/dd/yyyy'}
+              showTimeSelect={showTimeSelect ?? false}
+              wrapperClassName="date-picker"
+              className="shad-input border-0"
+            />
+          </FormControl>
+        </div>
+      );
+
+    case FormFieldType.SKELETON :
+      return (
+        renderSkeleton ? renderSkeleton(field) : null
+      );
+
+    case FormFieldType.SELECT : 
+      return (
+        <FormControl> 
+          <Select
+            onValueChange={field.change}
+            defaultValue={field.value}
+          >
+            <FormControl 
+              className="shad-select-trigger"
+            >
+              <SelectValue placeholder={placeholder} />
+            </FormControl>
+          </Select>   
+        </FormControl>
+      );
     default:
       break; // Handle other form field types if necessary
   }

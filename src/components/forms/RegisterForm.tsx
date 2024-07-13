@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { Form, FormControl } from "@/components/ui/form";
 import CustomFormProvider from "../CustomFormProvider";
 import SubmitButton from "../SubmitButton";
 import { useState } from "react";
@@ -12,6 +12,12 @@ import { UserFormSchema } from "@/lib/validation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import {FormFieldType} from "./PatientForm"
+// import { RadioGroup } from "../ui/radio-group";
+import  genderOption  from "@/constants/index"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Doctors } from "@/constants/index";
+import { SelectItem } from "../ui/select";
+import Image from "next/image";
 
 // interface RegisterFormProps {
 //     user : User
@@ -115,7 +121,7 @@ export function RegisterForm({user}:{user : User}) {
             control={form.control}
             name="phone"
             label="Phone Number"
-            placeholder="Enter your Number"
+            // placeholder="9090909090"
           />
         </div>
 
@@ -125,8 +131,8 @@ export function RegisterForm({user}:{user : User}) {
             control={form.control}
             name="birthDate"
             label="Date Of Birth"
-            placeholder="Enter your Email"
-            iconSrc="/assets/icons/email.svg"
+            // placeholder="Enter your Email"
+            // iconSrc="/assets/icons/email.svg"
             iconAlt="email"
           />
 
@@ -135,17 +141,100 @@ export function RegisterForm({user}:{user : User}) {
             control={form.control}
             name="gender"
             label="Gender"
-            placeholder="Enter your Number"
-            renderSkeleton={}
+            renderSkeleton={(field) => (
+              <FormControl>
+                <RadioGroup className="flex h-11 gap-6 xl:justify-between" 
+                onValueChange={field.onChange}
+                defaultValue={field.values}
+                >
+                  {genderOption.map((option) => (
+                    <div key={option}
+                    className="radio-group">
+                      <RadioGroupItem value={option} id={option} />
+                      <label htmlFor={option} className="cursor-pointer">{option}</label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            )}
           />
         </div>
+
         <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormProvider
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="address"
+            label="Address"
+            placeholder="Enter your Address"
+          />
 
+          <CustomFormProvider
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="occupation"
+            label="Occupation"
+            placeholder="Enter your occupation"
+          />
         </div>
+
         <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormProvider
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="emergencyContactName"
+            label="Emergency Contact Name"
+            placeholder="Guarian's name"
+            iconSrc="/assets/icons/multi-user (2).svg"
+            iconAlt="email"
+          />
 
+          <CustomFormProvider
+            fieldType={FormFieldType.PHONE_INPUT}
+            control={form.control}
+            name="emergencyContactNumber"
+            label="Emergency Contact Number"
+            // placeholder="9090909090"
+          />
         </div>
 
+        
+        <section className="space-y-4">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">
+              Medical Information
+            </h2>
+          </div>
+        </section>
+
+        
+          <CustomFormProvider
+              fieldType={FormFieldType.SELECT}
+              control={form.control}
+              name="primaryPhysician"
+              label="Primary Physician"
+              placeholder="select a primary physician"
+            >
+              {Doctors.map((doctor) => (
+                <SelectItem 
+                key={doctor.name}
+                value={doctor.name}
+                > 
+                  <div className="flex cursor-pointer items-center gap-2">
+                    <Image 
+                      src={doctor.image}
+                      alt="doctor"
+                      width={32}
+                      height={32}
+                      className=" rounded-full border border-dark-500"
+                    />
+                    <p>{doctor.name}</p>
+                  </div>
+                </SelectItem>
+              ))}
+            </CustomFormProvider>
+        
+        <div className="flex flex-col gap-6 xl:flex-row"></div>
         <SubmitButton isLoading={isLoading}>
           Get Started
         </SubmitButton>
