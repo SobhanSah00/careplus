@@ -18,8 +18,9 @@ import 'react-phone-number-input/style.css'
 import { E164Number } from 'libphonenumber-js' // Import the correct type for phone numbers
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { SelectValue, Select } from "./ui/select"
-
+import { SelectTrigger, SelectValue, Select, SelectContent } from "./ui/select"
+import { Textarea } from "./ui/textarea"
+import { Checkbox } from "./ui/checkbox"
 
 
 interface CustomProps {
@@ -110,17 +111,54 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
       return (
         <FormControl> 
           <Select
-            onValueChange={field.change}
+            onValueChange={field.onChange}
             defaultValue={field.value}
           >
-            <FormControl 
-              className="shad-select-trigger"
-            >
-              <SelectValue placeholder={placeholder} />
+            <FormControl >
+              <SelectTrigger className="shad-select-trigger">
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
             </FormControl>
+            
+            <SelectContent
+              className="shad-select-content"
+            >
+              {props.children}
+            </SelectContent>
           </Select>   
         </FormControl>
       );
+
+    case FormFieldType.TEXTAREA : 
+      return (
+        <FormControl>
+          <Textarea
+          placeholder={placeholder}
+          value={field.value}
+          onChange={field.onChange}
+          className="shad-textArea"
+          disabled={props.disabled}
+          />
+        </FormControl>
+      );
+    
+    case FormFieldType.CHECKBOX :
+      return (
+        <FormControl>
+          <>
+            <div className="flex items-center gap-6">
+              <Checkbox
+                id={props.name}
+                checked={field.value}
+                onChange={field.onChange}
+                // className="shad-checkbox"
+                // disabled={props.disabled}
+              />
+              <label className="checkbox-label" htmlFor={props.name}>{props.label}</label>
+            </div>
+          </>
+          </FormControl>
+        );
     default:
       break; // Handle other form field types if necessary
   }
