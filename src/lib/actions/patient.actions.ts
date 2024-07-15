@@ -3,6 +3,7 @@
 import { ID, Query } from "node-appwrite";
 import { users } from "../appwrite.config";
 import {parseStringify} from "../utils"
+import { InputFile} from "node-appwrite/file"
 
 export const createUser = async (user: CreateUserParams) => {
     try {
@@ -40,5 +41,19 @@ export const getUser = async(userId : string) => {
   }
   catch(error){
     console.error("An error occurred while getting a user:", error);
+  }
+}
+
+export const registerPatient = async({identificationDocument,...patient}:RegisterUserParams) => {
+  try {
+    let file;
+    if(identificationDocument) {
+      const inputFile = InputFile.fromBuffer(
+        identificationDocument?.get('blobFile') as Blob,
+        identificationDocument?.get('fileName') as string
+      )
+    }
+  } catch(error) {
+
   }
 }
