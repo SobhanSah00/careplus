@@ -150,7 +150,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               <Checkbox
                 id={props.name}
                 checked={field.value}
-                onChange={field.onChange}
+                onCheckedChange={field.onChange}
               />
               <label className="checkbox-label" htmlFor={props.name}>{props.label}</label>
             </div>

@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { users } from "../appwrite.config";
+import { BUCKET_ID, DATABASE_ID, databases, ENDPOINT, PATIENT_COLLECTION_ID, PROJECT_ID, storage, users } from "../appwrite.config";
 import {parseStringify} from "../utils"
 import { InputFile} from "node-appwrite/file"
 
@@ -52,8 +52,23 @@ export const registerPatient = async({identificationDocument,...patient}:Registe
         identificationDocument?.get('blobFile') as Blob,
         identificationDocument?.get('fileName') as string
       )
-    }
-  } catch(error) {
 
+      file = await storage.createFile(BUCKET_ID!,ID.unique(),inputFile)
+    }
+
+    const newPatient = await databases.createDocument(
+      ID.unique(),
+      PATIENT_COLLECTION_ID!,
+      DATABASE_ID!,
+      {
+        identificationDocumentId : file?.$id || null,
+        identificationDocumentUrl : `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file?.$id}/view?project=${PROJECT_ID}`,
+        ...patient
+      }
+    ) 
+    return parseStringify(newPatient);
+
+  } catch(error) {
+    console.error("An error occurred while creating a new patient:", error);
   }
 }

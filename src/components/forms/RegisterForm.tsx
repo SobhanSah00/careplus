@@ -19,6 +19,7 @@ import { Doctors,IdentificationTypes } from "@/constants/index";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
 import {FileUploader} from "../FileUploader";
+// import registerPatient from "@/lib/actions/patient.actions"
 
 
 // interface RegisterFormProps {
@@ -50,6 +51,9 @@ export function RegisterForm({user}:{user : User}) {
 
   async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
     setIsLoading(true);
+    console.log('clicked');
+    console.log('Form Values:', values); 
+    
 
     let formData;
 
@@ -70,23 +74,16 @@ export function RegisterForm({user}:{user : User}) {
         birthDate : new Date(values.birthDate),
         identificationDocument : formData
       }
+
+      //@ts-ignore
       const patient = await registerPatient(patientData)
 
       if(patient) {
         router.push(`/patients/${patient.$id}/new-appointment`)
       }
     } catch (error) {
-      
+      console.log(error)
     }
-
-    try {
-      
-    } catch (error) {
-      
-    }
-
-    
-
 
     setIsLoading(false);
   };
@@ -363,7 +360,7 @@ export function RegisterForm({user}:{user : User}) {
             name="treatmentConsent"
             label="I consent to treatment"
           />
-
+          
           <CustomFormProvider
             fieldType={FormFieldType.CHECKBOX}
             control={form.control}
